@@ -10,7 +10,7 @@
 Az IoT (Internet of Things) eszközök gyakran hiányos, szétszórt, vagy nem szabványos dokumentációval rendelkeznek. Az **IoT-DocGen** egy olyan automatizált pipeline, amely képes beolvasni egy IoT eszköz nyers, "rendetlen" fájljait (JSON konfigurációk, nyers Python kód részletek, fejlesztői jegyzetek), és egy Nagy Nyelvi Modell (Google Gemini) segítségével automatikusan szintetizál belőlük egy letisztult, ember által olvasható, OpenAPI/Swagger-szabványhoz hasonló Markdown dokumentációt.
 
 ## 🧠 Alkalmazott Prompt Engineering Technikák
-A projekt megvalósítása során a "vakon promptolás" (Megaprompting) helyett tudatos, strukturált Prompt Engineering technikákat alkalmaztam:
+A promptok elkészítése során használtam LLM-et a valós promptok elkészítéséhez. A promptoknál az alábbi szempontokat kértem, hogy vegye figyelembe:
 
 1. **Task Decomposition (Feladatlebontás):** A szoftver fejlesztését és a promptolást 5 elkülönített logikai lépésre bontottam (Tervezés -> Adatgenerálás -> Rendszerprompt írás -> API integráció -> CLI orchestráció). Ezzel sikeresen elkerültem a modell hallucinációját és a minőségromlást.
 2. **Role Prompting (Perszóna adása):** A meta-promptban a modell megkapta a *"Senior API Architect"* és *"Expert Technical Writer"* perszonákat, ami drasztikusan javította a generált dokumentáció szakmai szóhasználatát és struktúráját.

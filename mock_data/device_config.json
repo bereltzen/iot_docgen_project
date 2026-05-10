@@ -1,0 +1,8 @@
+{
+  "deviceId": "ENV-SENSOR-8832",
+  "firmware_version": "v2.1.4-beta",
+  "protocols": ["MQTT", "HTTP"],
+  "telemetryIntervalMs": 5000,
+  "supported_sensors": ["temperature", "humidity", "co2_ppm"],
+  "status": "active"
+}

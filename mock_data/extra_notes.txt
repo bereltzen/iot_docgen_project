@@ -1,0 +1,5 @@
+Hey team, a few things to remember for the docs:
+- The /reboot endpoint requires an "X-API-Key" header to pass verify_admin().
+- Rate limiting is active: max 10 requests per minute on the current readings endpoint to prevent hardware lockup.
+- The co2_ppm sensor sometimes returns -1 if it's still calibrating.
+- Base URL is usually http://<device_ip>:8080

@@ -1,3 +1,6 @@
+---
+
+```markdown
 # 🚀 IoT-DocGen: Automatikus API Dokumentáció Generáló
 
 **Készítette:** Papp Bercel 
@@ -39,3 +42,38 @@ A projekt fejlesztése során valós, iparági problémákkal szembesültem, ami
  ┣ 📜 main.py                 # CLI Orchestrator, ami összefogja a pipeline-t
  ┣ 📜 requirements.txt
  ┗ 📜 README.md
+
+```
+
+## 💻 Telepítés és Futtatás
+
+1. **Függőségek telepítése:**
+```bash
+pip install -r requirements.txt
+
+```
+
+
+2. **Környezeti változók beállítása:**
+Hozd létre a `.env` fájlt a gyökérkönyvtárban, és add hozzá az API kulcsod:
+```env
+GEMINI_API_KEY=ide_jon_a_kulcsod
+
+```
+
+
+3. **A Pipeline futtatása:**
+Futtasd az orchestrator scriptet az alapértelmezett beállításokkal:
+```bash
+python main.py
+
+```
+
+
+*Opcionális argumentumok:* `python main.py --input ./egyedi_mappa --output ./docs/egyedi_doc.md`
+
+```
+
+***
+
+```

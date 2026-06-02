@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>IoT-DocGen — Automated IoT API Documentation Generator</title>
+    <meta name="description" content="Generate beautiful, structured OpenAPI-style API documentation from raw IoT device configurations, handler codes, and developer notes using Gemini LLM.">
+    <meta name="keywords" content="IoT, API, Documentation, Generator, Gemini, LLM, Prompt Engineering, OpenAPI, Swagger, Static Site">
+    <meta name="author" content="IoT-DocGen Project">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph (Facebook / LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="IoT-DocGen — Automated IoT API Documentation Generator">
+    <meta property="og:description" content="Convert messy raw IoT configs and code into professional OpenAPI-style markdown documentation instantly using Gemini.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Tomorrow Night theme for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Ambient background glows -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-microchip"></i>
+                    <div class="logo-pulse"></div>
+                </div>
+                <div class="logo-text">
+                    <h1>IoT-DocGen</h1>
+                    <span class="logo-tagline">Automated API Documentation Generator</span>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <!-- Mode Toggle -->
+                <div class="mode-toggle-container">
+                    <span class="mode-label active" id="label-demo">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Demo Mode
+                    </span>
+                    <label class="switch">
+                        <input type="checkbox" id="mode-switch">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="mode-label" id="label-live">
+                        <i class="fa-solid fa-bolt"></i> Live API
+                    </span>
+                </div>
+                
+                <!-- Github Badge -->
+                <a href="https://github.com" target="_blank" class="github-link" id="github-link">
+                    <i class="fa-brands fa-github"></i> View Source
+                </a>
+            </div>
+        </header>
+
+        <!-- API KEY SETTING BANNER (COLLAPSIBLE) -->
+        <section class="api-key-banner hidden" id="api-key-section">
+            <div class="api-key-card">
+                <div class="api-key-info">
+                    <h3><i class="fa-solid fa-key-skeleton"></i> Gemini API Configuration</h3>
+                    <p>Enter your Gemini API Key to run live generation on your custom files. Get a free key at the <a href="https://aistudio.google.com" target="_blank">Google AI Studio <i class="fa-solid fa-arrow-up-right-from-square"></i></a>.</p>
+                </div>
+                <div class="api-key-input-wrapper">
+                    <div class="input-glow-container">
+                        <input type="password" id="api-key-input" placeholder="AIzaSy..." autocomplete="current-password">
+                        <button type="button" id="toggle-key-visibility" class="btn-icon-toggle" aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <button id="save-key-btn" class="btn btn-secondary">Save Key</button>
+                </div>
+                <div class="api-key-badge">
+                    <i class="fa-solid fa-shield-halved"></i> Client-Side Only (Stored in your browser)
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN CONTENT WORKSPACE -->
+        <main class="app-workspace">
+            
+            <!-- LEFT PANEL: INPUT FILES & SELECTIONS -->
+            <section class="panel panel-left" id="input-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-file-code"></i> Workspace Inputs</h2>
+                    
+                    <!-- Predefined Device Examples Selector -->
+                    <div class="example-selector">
+                        <label for="example-select">Load Device:</label>
+                        <select id="example-select" aria-label="Choose a device example">
+                            <option value="env-sensor">ENV-SENSOR-8832 (Weather Station)</option>
+                            <option value="smart-lock">LOCK-SECURE-99X (Smart Door Lock)</option>
+                            <option value="industrial-plc">PLC-IND-400 (Modbus Gateway)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tabbed Editor Wrapper -->
+                <div class="editor-container">
+                    <div class="editor-tabs-bar" id="editor-tabs" role="tablist">
+                        <!-- Dynamic file tabs generated here -->
+                        <button class="add-tab-btn" id="add-file-btn" title="Create a new raw file"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    
+                    <div class="editor-active-filename-bar">
+                        <div class="filename-badge">
+                            <i class="fa-solid fa-file-signature"></i>
+                            <input type="text" id="active-filename" value="" placeholder="file.json" title="Click to rename this file">
+                        </div>
+                        <button class="delete-tab-btn" id="delete-file-btn" title="Delete this file"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+
+                    <div class="editor-body">
+                        <!-- Line Numbers gutter -->
+                        <div class="line-numbers" id="editor-line-numbers">
+                            <div>1</div>
+                        </div>
+                        <!-- Monospace edit area -->
+                        <textarea id="editor-textarea" spellcheck="false" placeholder="Write or paste your raw IoT file contents here..." aria-label="Code Editor"></textarea>
+                    </div>
+                </div>
+
+                <!-- Control Buttons under Editor -->
+                <div class="editor-controls">
+                    <button id="reset-workspace-btn" class="btn btn-tertiary" title="Restore original files for this example">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Files
+                    </button>
+                    <button id="generate-btn" class="btn btn-primary btn-glow">
+                        <span class="btn-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate API Docs</span>
+                        <div class="btn-loader hidden"><i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...</div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: API DOCUMENTATION OUTPUTS -->
+            <section class="panel panel-right" id="output-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-book-open"></i> API Documentation Output</h2>
+                    
+                    <!-- Output Action Buttons -->
+                    <div class="output-actions hidden" id="output-actions">
+                        <button id="copy-markdown-btn" class="btn btn-secondary btn-small" title="Copy documentation markdown text to clipboard">
+                            <i class="fa-solid fa-clipboard"></i> Copy
+                        </button>
+                        <button id="download-markdown-btn" class="btn btn-secondary btn-small" title="Download as a .md file">
+                            <i class="fa-solid fa-download"></i> Download
+                        </button>
+                        <button id="print-btn" class="btn btn-secondary btn-small" title="Print or save as PDF">
+                            <i class="fa-solid fa-print"></i> PDF
+                        </button>
+                    </div>
+
+                    <!-- Output Preview Tabs -->
+                    <div class="output-tabs" role="tablist">
+                        <button class="tab-btn active" id="tab-preview-btn" role="tab" aria-selected="true" aria-controls="output-preview"><i class="fa-regular fa-file-lines"></i> Preview</button>
+                        <button class="tab-btn" id="tab-raw-btn" role="tab" aria-selected="false" aria-controls="output-raw"><i class="fa-solid fa-code"></i> Markdown</button>
+                    </div>
+                </div>
+
+                <!-- Output Display Window -->
+                <div class="output-body">
+                    
+                    <!-- Idle/Empty State Card -->
+                    <div class="output-state active" id="state-idle">
+                        <div class="idle-graphic">
+                            <i class="fa-solid fa-microchip"></i>
+                            <div class="ripple"></div>
+                        </div>
+                        <h3>Ready for Document Synthesis</h3>
+                        <p>Select one of the IoT device examples on the left, modify the device configuration, code snippets, or notes as needed, and hit <strong>Generate API Docs</strong> to synthesize structured OpenAPI-style documentation.</p>
+                        <div class="mode-hint-card">
+                            <span class="badge"><i class="fa-solid fa-info-circle"></i> Running in Demo Mode</span>
+                            <p>Runs client-side instantly for free using pre-compiled expert LLM responses, displaying realistic progression speeds.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Loading Animation State -->
+                    <div class="output-state hidden" id="state-loading">
+                        <div class="loading-container">
+                            <div class="pulse-processor">
+                                <i class="fa-solid fa-brain-circuit"></i>
+                                <div class="scanning-beam"></div>
+                            </div>
+                            
+                            <div class="loading-progress-bar-wrapper">
+                                <div class="loading-progress-bar" id="generation-progress"></div>
+                            </div>
+                            
+                            <h3>Synthesizing API Specifications</h3>
+                            <p class="loading-status-text" id="loading-status">Step 1: Normalizing raw repository context...</p>
+                            
+                            <div class="loading-terminal">
+                                <div class="terminal-header">
+                                    <div class="terminal-dots">
+                                        <span></span><span></span><span></span>
+                                    </div>
+                                    <span class="terminal-title">iot-docgen-synthesis.log</span>
+                                </div>
+                                <div class="terminal-body" id="loading-terminal-logs">
+                                    <!-- Dynamic logs will be appended here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rendering Document Frame -->
+                    <div class="output-state-content hidden" id="state-result">
+                        <!-- Preview Render tab content -->
+                        <div class="result-tab-content active" id="output-preview" role="tabpanel">
+                            <div class="markdown-body" id="markdown-rendered-content">
+                                <!-- Rendered HTML markdown injects here -->
+                            </div>
+                        </div>
+                        <!-- Raw source tab content -->
+                        <div class="result-tab-content hidden" id="output-raw" role="tabpanel">
+                            <pre><code class="language-markdown" id="raw-markdown-content"></code></pre>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p><strong>IoT-DocGen</strong> — Constructed for Prompt Engineering Curriculum. Powered by Google Gemini LLM API.</p>
+            <div class="footer-links">
+                <span><i class="fa-solid fa-coins"></i> 0-Cost Static Build</span>
+                <span class="dot-separator">•</span>
+                <span><i class="fa-solid fa-shield"></i> Stored Locally</span>
+                <span class="dot-separator">•</span>
+                <a href="https://github.com" target="_blank"><i class="fa-brands fa-github-alt"></i> Github Repository</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- CDNs: Marked.js for markdown parsing, Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+    
+    <!-- Custom Application Javascript -->
+    <script src="app.js"></script>
+</body>
+</html>

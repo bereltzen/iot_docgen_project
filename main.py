@@ -1,6 +1,8 @@
 import argparse
 import logging
+import os
 import sys
+from dotenv import load_dotenv
 
 # Import our custom modules
 from input_reader import read_device_inputs, format_inputs_for_prompt
@@ -32,7 +34,7 @@ def main():
     args = parser.parse_args()
 
     print("==================================================")
-    print("🚀 Starting IoT-DocGen Pipeline")
+    print("[*] Starting IoT-DocGen Pipeline")
     print("==================================================")
 
     # 2. Read and Format Inputs
@@ -46,39 +48,42 @@ def main():
     normalized_context = format_inputs_for_prompt(raw_data_dict)
     print(f"    -> Successfully loaded {len(raw_data_dict)} file(s).")
 
-    # 3. Build the Prompt - API key
-    # print("[*] Step 2: Constructing LLM prompt architecture...")
-    # final_prompt = build_documentation_prompt(normalized_context)
-    # print("    -> Prompt built successfully.")
-
-    # 3. Build the Prompt - No API key -> The outcome is a prompt that the user has to send to
+    # 3. Build the Prompt
     print("[*] Step 2: Constructing LLM prompt architecture...")
     final_prompt = build_documentation_prompt(normalized_context)
     print("    -> Prompt built successfully.\n")
-    print("=== MÁSOLD KI EZT A PROMPTOT ===")
-    print(final_prompt)
-    print("================================\n")
 
-    # 4. Generate Documentation via API
-    # print("[*] Step 3: Sending payload to Google Gemini API (gemini-1.5-flash)...")
-    # generated_markdown = generate_documentation(final_prompt)
-    
-    # if not generated_markdown:
-    #     logging.error("[!] Failed to generate documentation from the API. Aborting.")
-    #     sys.exit(1)
-    # print("    -> Documentation generated successfully.")
+    # Check for GEMINI_API_KEY in .env
+    load_dotenv()
+    api_key = os.getenv("GEMINI_API_KEY")
+    is_valid_key = api_key and api_key.strip() != "" and "Your API KEY" not in api_key
 
-    # 5. Save Output
-    # print(f"[*] Step 4: Saving output to '{args.output}'...")
-    # success = save_markdown_to_file(generated_markdown, args.output)
-    
-    # if success:
-    #     print("==================================================")
-    #     print(f"✅ Pipeline Complete! Your docs are ready at: {args.output}")
-    #     print("==================================================")
-    # else:
-    #     logging.error("[!] Pipeline failed during file saving.")
-    #     sys.exit(1)
+    if is_valid_key:
+        # 4. Generate Documentation via API
+        print("[*] Step 3: Sending payload to Google Gemini API (gemini-2.0-flash)...")
+        generated_markdown = generate_documentation(final_prompt)
+        
+        if not generated_markdown:
+            logging.error("[!] Failed to generate documentation from the API. Aborting.")
+            sys.exit(1)
+        print("    -> Documentation generated successfully.")
+
+        # 5. Save Output
+        print(f"[*] Step 4: Saving output to '{args.output}'...")
+        success = save_markdown_to_file(generated_markdown, args.output)
+        
+        if success:
+            print("==================================================")
+            print(f"[SUCCESS] Pipeline Complete! Your docs are ready at: {args.output}")
+            print("==================================================")
+        else:
+            logging.error("[!] Pipeline failed during file saving.")
+            sys.exit(1)
+    else:
+        print("[HINT] Set GEMINI_API_KEY in your .env file to automate documentation generation via the API.")
+        print("=== MÁSOLD KI EZT A PROMPTOT / COPY THIS PROMPT ===")
+        print(final_prompt)
+        print("===================================================\n")
 
 if __name__ == "__main__":
     main()
